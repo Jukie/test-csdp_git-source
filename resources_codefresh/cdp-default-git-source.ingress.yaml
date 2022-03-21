@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.org/mergeable-ingress-type: minion
+  name: cdp-default-git-source
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: codefresh-csdp-poc-bolt.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: push-github-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/codefresh/push-github
+        pathType: Prefix
