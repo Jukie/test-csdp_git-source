@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: cf-pipeline2
+spec:
+  template:
+    serviceAccountName: argo-server
+  eventBusName: codefresh-eventbus
+  dependencies:
+    - name: github-c2fcdaad-2cdb-4a12-bbe5-e236c37d5438
+      eventName: github-c2fcdaad-2cdb-4a12-bbe5-e236c37d5438
+      eventSourceName: cf-pipeline2
+      filters:
+        data:
+          - path: body.X-GitHub-Event
+            value:
+              - push
+            type: string
+          - path: body.ref
+            template: '{{ (split "/" .Input)._1 }}'
+            value:
+              - heads
+            type: string
+  triggers:
+    - template:
+        name: mytrigger
+        conditions: github-c2fcdaad-2cdb-4a12-bbe5-e236c37d5438
+        argoWorkflow:
+          operation: submit
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: WorkflowTemplate
+              metadata:
+                generateName: cf-pipeline2-mytrigger-
+              spec:
+                workflowTemplateRef:
+                  name: hello-world
+          parameters: []
