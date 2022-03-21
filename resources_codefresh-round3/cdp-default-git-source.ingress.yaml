@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cdp-default-git-source
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: codefresh-csdp-poc-bolt.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: push-github-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/codefresh-round3/push-github
+        pathType: Prefix

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: push-github
+spec:
+  eventBusName: codefresh-eventbus
+  github:
+    github-push-heads:
+      active: true
+      apiToken:
+        key: git_token
+        name: autopilot-secret
+      contentType: json
+      events:
+      - push
+      insecure: true
+      repositories:
+      - names:
+        - test-csdp_git-source
+        owner: Jukie
+      webhook:
+        endpoint: /webhooks/codefresh-round3/push-github/github-push-heads
+        method: POST
+        port: "80"
+        url: https://codefresh-csdp-poc-bolt.net
+  service:
+    ports:
+    - port: 80
